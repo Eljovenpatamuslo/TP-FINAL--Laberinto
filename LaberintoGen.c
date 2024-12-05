@@ -16,15 +16,15 @@ char** crear_declarar_Tablero(int dimensiones){
 }
 
 void imprimir_Tablero_en_archivo(struct Laberinto Laberinto){
-    FILE* fileSalida = fopen(ARCHIVO_SALIDA,"w");
-    assert(fileSalida != NULL);
+    FILE* archivoSalida = fopen(ARCHIVO_SALIDA,"w");
+    assert(archivoSalida != NULL);
     for(int i = 0; i < Laberinto.dimensiones; i++){
         for(int j = 0; j < Laberinto.dimensiones; j++){
-            fprintf(fileSalida,"%c",Laberinto.Tablero[i][j]);
+            fprintf(archivoSalida,"%c",Laberinto.Tablero[i][j]);
         }
-        fprintf(fileSalida,"\n");
+        fprintf(archivoSalida,"\n");
     }
-    fclose(fileSalida);
+    fclose(archivoSalida);
 }
 
 void poner_paredes_aleatorias_Tablero(struct Laberinto* Laberinto,int cantCaracteres){
@@ -39,28 +39,28 @@ void poner_paredes_aleatorias_Tablero(struct Laberinto* Laberinto,int cantCaract
     }
 }
 
-void pasar_archivo_a_Laberinto(struct Laberinto* Laberinto,char* pathEntrada){
+void pasar_archivo_a_Laberinto(struct Laberinto* Laberinto,char* direccionEntrada){
     char buffer[256];
     int aleatorios;
-    FILE* fileEntrada = fopen(pathEntrada,"r");
-    assert(fileEntrada != NULL);
+    FILE* Archivo = fopen(direccionEntrada,"r");
+    assert(Archivo != NULL);
 
-    while(fscanf(fileEntrada,"%[^\n]\n",buffer) != EOF){
+    while(fscanf(Archivo,"%[^\n]\n",buffer) != EOF){
         int Fila,Columna;
         
         if(strcmp(buffer,TXT_DIMENSION) == 0){
-            fscanf(fileEntrada,"%d\n",&Laberinto->dimensiones);
+            fscanf(Archivo,"%d\n",&Laberinto->dimensiones);
             Laberinto->Tablero = crear_declarar_Tablero(Laberinto->dimensiones);
 
         }else if(strcmp(buffer,TXT_OBSTACULOS_ALEATORIOS) == 0){
-            fscanf(fileEntrada,"%d\n",&aleatorios);
+            fscanf(Archivo,"%d\n",&aleatorios);
 
         }else if(strcmp(buffer,TXT_POSICION_INICIAL) == 0){
-            fscanf(fileEntrada,"(%d,%d)\n",&Fila,&Columna);
+            fscanf(Archivo,"(%d,%d)\n",&Fila,&Columna);
             Laberinto->Tablero[Fila-1][Columna-1] = SALIDA;
 
         }else if(strcmp(buffer,TXT_OBJETIVO) == 0){
-            fscanf(fileEntrada,"(%d,%d)\n",&Fila,&Columna);
+            fscanf(Archivo,"(%d,%d)\n",&Fila,&Columna);
             Laberinto->Tablero[Fila-1][Columna-1] = OBJETIVO;
 
         }else if(strcmp(buffer,TXT_OBSTACULOS_FIJOS) != 0){
@@ -70,7 +70,7 @@ void pasar_archivo_a_Laberinto(struct Laberinto* Laberinto,char* pathEntrada){
             Laberinto->Tablero[Fila-1][Columna-1] = PARED;
         }
     }
-    fclose(fileEntrada);
+    fclose(Archivo);
     poner_paredes_aleatorias_Tablero(Laberinto,aleatorios); //se llama una vez que se pusieron todos los demas elementos ya que 
                                                             //podria poner una pared en la posicion de inicio,etc
 }
