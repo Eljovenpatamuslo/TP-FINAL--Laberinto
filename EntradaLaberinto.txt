@@ -1,5 +1,5 @@
 dimension
-6
+7
 obstaculos fijos
 (1,2)
 (1,5)

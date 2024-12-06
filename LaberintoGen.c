@@ -53,7 +53,7 @@ void poner_caracter_en_posicion(FILE* Archivo,struct Laberinto* Laberinto,char c
     Laberinto->Tablero[Fila-1][Columna-1] = caracter;
 }
 
-void poner_obstaculos_fijos(FILE* Archivo,struct Laberinto* Laberinto){
+void poner_obstaculos_fijos_en_Laberinto(FILE* Archivo,struct Laberinto* Laberinto){
     int Fila,Columna;
     fscanf(Archivo,"%*[^\n]\n");
     while(fscanf(Archivo,"(%d,%d)\n",&Fila,&Columna) == 2){
@@ -69,7 +69,7 @@ void pasar_archivo_a_Laberinto(struct Laberinto* Laberinto,char* direccionEntrad
     Laberinto->dimensiones = obtener_entero_del_archivo(Archivo);
     Laberinto->Tablero = crear_declarar_Tablero(Laberinto->dimensiones);
 
-    poner_obstaculos_fijos(Archivo,Laberinto);
+    poner_obstaculos_fijos_en_Laberinto(Archivo,Laberinto);
 
     Aleatorios = obtener_entero_del_archivo(Archivo);
     
