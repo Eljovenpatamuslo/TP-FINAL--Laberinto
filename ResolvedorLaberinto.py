@@ -80,6 +80,8 @@ def pasar_archivo_a_Tablero(Laberinto:dict) -> None:
             Laberinto["Tablero"].append(linea.strip('\n\r'))
     Laberinto["Dimensiones"] = len(Laberinto["Tablero"])
 
+#toma la lista de posiciones validas y la posicion del destino y devuelve la posicion mas cercana a destino
+#en caso de que dos posiciones esten a igual distancia, se retornara la primera evaluada con menor longitud
 def posicion_mas_cercana_a_destino(posValidas:list, posDestino:tuple) -> tuple:
     (filaDestino,columnaDestino) = posDestino
     menorLogitud = -1
@@ -91,8 +93,9 @@ def posicion_mas_cercana_a_destino(posValidas:list, posDestino:tuple) -> tuple:
             indice = i
     return posValidas[indice]
 
-#cambiar nombre?
-def calcular_siguientes_pos(Laberinto:dict, Solucion:list, posInvalidas:set) -> list:
+#toma el Laberinto, el camino actual y las posiciones invalidas y retorna la lista de posiciones en las que se puede mover
+#si no existen posiciones a las donde moverse, la funcion retornara lista vacia
+def calcular_siguientes_pos(Laberinto:dict, caminoActual:list, posInvalidas:set) -> list:
     Pared = "1"
     (filaActual,columnaActual) = Laberinto["posActual"]
     Direcciones = [(1,0),(0,1),(-1,0),(0,-1)] # abajo,derecha,arriba,izquierda
@@ -106,39 +109,42 @@ def calcular_siguientes_pos(Laberinto:dict, Solucion:list, posInvalidas:set) -> 
         if 0 <= filaSumada < Laberinto["Dimensiones"] and 0 <= columnaSumada < Laberinto["Dimensiones"]:
             caracterEnTablero = Laberinto["Tablero"][filaSumada][columnaSumada]
 
-            if caracterEnTablero != Pared and (filaSumada,columnaSumada) not in posInvalidas and (filaSumada,columnaSumada) not in Solucion:
+            if caracterEnTablero != Pared and (filaSumada,columnaSumada) not in posInvalidas and (filaSumada,columnaSumada) not in caminoActual:
                 posValidas.append((filaSumada,columnaSumada))
         direccionActual+=1
 
     return posValidas
 
+#toma el diccionario Laberinto y devuelve una lista que es el camino desde el inicio hasta el destino
+#si devuelve una lista vacia entonces no es posible encontrar un camino con la configuracion del tablero
 def buscar_solucion(Laberinto:dict) -> list:
     Laberinto["posActual"] = Laberinto["posInicial"]
     posInvalidas = set()
-    Solucion = []
+    caminoActual = []
     terminar = False
+
     while not terminar:
-        Solucion.append(Laberinto["posActual"])
-        posValidas = calcular_siguientes_pos(Laberinto,Solucion,posInvalidas)
+        caminoActual.append(Laberinto["posActual"])
+        posValidas = calcular_siguientes_pos(Laberinto,caminoActual,posInvalidas)
 
         if posValidas != []:
             Laberinto["posActual"] = posicion_mas_cercana_a_destino(posValidas,Laberinto["posDestino"])
-
         else:
             if Laberinto["posActual"] == Laberinto["posInicial"]:
                 terminar = True
-
             posInvalidas.add(Laberinto["posActual"])
             Laberinto["posActual"] = Laberinto["posInicial"]
-            Solucion = []
+            caminoActual = []
 
         (filaActual,columnaActual) = Laberinto["posActual"]
-
         if Laberinto["Tablero"][filaActual][columnaActual] == "X":
-            Solucion.append(Laberinto["posActual"])
+            caminoActual.append(Laberinto["posActual"])
             terminar = True
-    return Solucion
 
+    return caminoActual
+
+#toma la lista Solucion y suma 1 a cada una de las componentes
+#solo sirve para mostrarlo en notacion matricial a la hora de imprimirlo
 def trasnformar_a_notacion_matricial(Solucion:list) -> None:
     for i in range(len(Solucion)):
         Solucion[i] = (Solucion[i][0]+1,Solucion[i][1]+1)
@@ -200,9 +206,7 @@ if __name__ == "__main__":
     main()
 
 
-###tests
-
-#def test_pasar_archivo_a_Tablero():#ver porque es aleatoria la carga
+#---tests---
 
 def test_posicion_mas_cercana_a_destino():
     assert (posicion_mas_cercana_a_destino([(0,1),(1,0),(2,1),(3,1)],(6,6))) == (3,1)
@@ -243,11 +247,40 @@ def test_buscar_solucion():
     assert(buscar_solucion(Laberinto4) == [])
 
 def test_calcular_siguientes_pos():
-    Solucion = []
+    caminoActual = []
     Tablero = [ "I101",
                 "0001",
                 "0101",
                 "0X01" ]
     Laberinto = {"Tablero":Tablero,"Dimensiones":4,"posActual":(0,0),"posInicial":(0,0),"posDestino":(3,1)}
     posicionesInvalidas = set()
-    assert(calcular_siguientes_pos(Laberinto,Solucion,posicionesInvalidas) == [(1,0)])
+    assert(calcular_siguientes_pos(Laberinto,caminoActual,posicionesInvalidas) == [(1,0)])
+
+    caminoActual2 = []
+    Tablero2 = ["I1010",
+                "10010",
+                "01000",
+                "0X010",
+                "00100"]
+    Laberinto2 = {"Tablero":Tablero2,"Dimensiones":len(Tablero2),"posActual":(0,0),"posInicial":(0,0),"posDestino":(3,1)}
+    posicionesInvalidas2 = set()
+    assert(calcular_siguientes_pos(Laberinto2,caminoActual2,posicionesInvalidas2) == [])
+
+    caminoActual3 = [(1,0)]
+    Tablero3 = ["I101",
+                "0001",
+                "0101",
+                "0X01"]
+    Laberinto3 = {"Tablero":Tablero3,"Dimensiones":len(Tablero3),"posActual":(0,0),"posInicial":(0,0),"posDestino":(3,1)}
+    posicionesInvalidas3 = set()
+    assert(calcular_siguientes_pos(Laberinto3,caminoActual3,posicionesInvalidas3) == [])
+
+    caminoActual4 = []
+    Tablero4 = ["I0010",
+                "10010",
+                "01000",
+                "0001X",
+                "00100"]
+    Laberinto4 = {"Tablero":Tablero4,"Dimensiones":len(Tablero4),"posActual":(2,0),"posInicial":(0,0),"posDestino":(3,4)}
+    posicionesInvalidas4 = set()
+    assert(calcular_siguientes_pos(Laberinto4,caminoActual4,posicionesInvalidas4) == [(3,0)])
