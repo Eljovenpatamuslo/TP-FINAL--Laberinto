@@ -71,7 +71,7 @@ void pasar_archivo_a_Laberinto(struct Laberinto* Laberinto,char* direccionEntrad
 
     poner_obstaculos_fijos(Archivo,Laberinto);
 
-    Aleatorios = obtener_entero(Archivo);
+    Aleatorios = obtener_entero_del_archivo(Archivo);
     
     poner_caracter_en_posicion(Archivo,Laberinto,SALIDA);//Posicion Inicial
     poner_caracter_en_posicion(Archivo,Laberinto,OBJETIVO);//Objetivo
