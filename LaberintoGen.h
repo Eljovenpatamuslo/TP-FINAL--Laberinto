@@ -42,4 +42,13 @@ char** crear_declarar_Tablero(int dimensiones);
 //libera la memoria de Tablero
 void liberar_Memoria_Tablero(struct Laberinto Laberinto);
 
+//toma el archivo de entrada, el puntero estructura Laberinto y pone paredes en las distintas posiciones debajo del texto "obstaculos fijos"
+void poner_obstaculos_fijos_en_Laberinto(FILE* Archivo,struct Laberinto* Laberinto);
+
+//toma el archivo de entrada, el puntero estructura laberinto, un caracter
+void poner_caracter_en_posicion(FILE* Archivo,struct Laberinto* Laberinto,char caracter);
+
+//toma el archivo de entrada y devuelve el valor entero debajo del texto
+int obtener_entero_del_archivo(FILE* Archivo);
+
 #endif
