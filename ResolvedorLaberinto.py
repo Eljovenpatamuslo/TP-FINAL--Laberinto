@@ -64,7 +64,11 @@ import platform
 def pasar_archivo_a_Tablero(Laberinto:dict) -> None:
     archivoParaLeer = "SalidaLaberinto.txt"
     archivoParaC = "EntradaLaberinto.txt"
-    tipoDeEjecutable = "LaberintoGenerado"
+    tipoDeEjecutable = ""
+    if platform.system() == "Windows":
+        tipoDeEjecutable = "./a.exe"
+    else:
+        tipoDeEjecutable = "./a.out"
         
     response = subprocess.run([tipoDeEjecutable, archivoParaC])
     if response.returncode != 0:
