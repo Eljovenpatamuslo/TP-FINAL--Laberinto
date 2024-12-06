@@ -18,6 +18,7 @@ char** crear_declarar_Tablero(int dimensiones){
 void imprimir_Tablero_en_archivo(struct Laberinto Laberinto){
     FILE* archivoSalida = fopen(ARCHIVO_SALIDA,"w");
     assert(archivoSalida != NULL);
+    
     for(int i = 0; i < Laberinto.dimensiones; i++){
         for(int j = 0; j < Laberinto.dimensiones; j++){
             fprintf(archivoSalida,"%c",Laberinto.Tablero[i][j]);
@@ -74,11 +75,13 @@ void pasar_archivo_a_Laberinto(struct Laberinto* Laberinto,char* direccionEntrad
     Aleatorios = obtener_entero_del_archivo(Archivo);
     
     poner_caracter_en_posicion(Archivo,Laberinto,SALIDA);//Posicion Inicial
+
     poner_caracter_en_posicion(Archivo,Laberinto,OBJETIVO);//Objetivo
+
+    fclose(Archivo);
 
     poner_paredes_aleatorias_Tablero(Laberinto,Aleatorios); //se llama una vez que se pusieron todos los demas elementos ya que 
                                                             //podria poner una pared en la posicion de inicio,etc
-    fclose(Archivo);
 }
 
 void liberar_Memoria_Tablero(struct Laberinto Laberinto){
@@ -91,6 +94,8 @@ void liberar_Memoria_Tablero(struct Laberinto Laberinto){
 int main(int argc, char** argv){
     if(argc != 2){ //si no se pone el archivo de entrada, el programa no corre
         printf("Cantidad incorrecta de archivos\n");
+        printf(".\\a.exe <Entrada> (Windows)\n");
+        printf("./a.out <Entrada> (Linux)\n");
         return 1;
     }
     srand(time(NULL));//solo usado para la funcion rand()
