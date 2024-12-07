@@ -9,10 +9,10 @@ gcc -Wall -g LaberintoGen.c
 
 ## Compilar archivo de python: 
 
-python3 ResolvedorLaberinto.py
+python3 ResolverLaberinto.py
 
 ## Testear valgrind:
 valgrind -s --leak-check=full ./a.out EntradaLaberinto.txt
 
 ## Testear pytest:
-python3 -m pytest -v .\ResolvedorLaberinto.py
+python3 -m pytest -v ResolverLaberinto.py
