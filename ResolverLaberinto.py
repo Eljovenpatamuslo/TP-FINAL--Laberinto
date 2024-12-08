@@ -54,7 +54,7 @@ Las prioridades del algoritmo son 1.ir abajo,2.ir derecha,3.ir arriba,4.ir izqui
 import subprocess
 import platform
 
-#recibe el diccionario Laberinto
+#recibe el Laberinto y:
 #en la clave "Tablero" se agregan strings siendo cada string una fila del tablero
 #en la clave "Dimensiones" se le asigma el largo del tablero 
 def pasar_archivo_a_Tablero(Laberinto:dict) -> None:
@@ -76,8 +76,8 @@ def pasar_archivo_a_Tablero(Laberinto:dict) -> None:
             Laberinto["Tablero"].append(linea.strip('\n\r'))
     Laberinto["Dimensiones"] = len(Laberinto["Tablero"])
 
-#toma la lista de posiciones validas y la posicion del destino y devuelve la posicion mas cercana a destino
-#en caso de que dos posiciones esten a igual distancia, se retornara la primera evaluada con menor longitud
+#toma las posiciones validas, la posicion del destino y devuelve la posicion mas cercana al destino
+#en caso de que dos posiciones esten a igual distancia, se retorna la primera que se evaluo con menor longitud
 def posicion_mas_cercana_a_destino(posValidas:list, posDestino:tuple) -> tuple:
     (filaDestino,columnaDestino) = posDestino
     menorLogitud = -1
@@ -89,8 +89,8 @@ def posicion_mas_cercana_a_destino(posValidas:list, posDestino:tuple) -> tuple:
             indice = i
     return posValidas[indice]
 
-#toma el Laberinto, el camino actual y las posiciones invalidas y retorna la lista de posiciones en las que se puede mover
-#si no existen posiciones a las donde moverse, la funcion retornara lista vacia
+#toma el Laberinto, el camino actual y las posiciones invalidas y retorna la lista de posiciones a las que se puede mover
+#si no existen posiciones a las donde moverse, la funcion retorna una lista vacia
 def calcular_siguientes_pos(Laberinto:dict, caminoActual:list, posInvalidas:set) -> list:
     Pared = "1"
     (filaActual,columnaActual) = Laberinto["posActual"]
@@ -111,7 +111,7 @@ def calcular_siguientes_pos(Laberinto:dict, caminoActual:list, posInvalidas:set)
 
     return posValidas
 
-#toma el diccionario Laberinto y devuelve una lista que es el camino desde el inicio hasta el destino
+#toma el Laberinto y devuelve una la solucion de ese laberinto
 #si devuelve una lista vacia entonces no es posible encontrar un camino con la configuracion del tablero
 def buscar_solucion(Laberinto:dict) -> list:
     Laberinto["posActual"] = Laberinto["posInicial"]
@@ -139,7 +139,7 @@ def buscar_solucion(Laberinto:dict) -> list:
 
     return caminoActual
 
-#toma la lista Solucion y suma 1 a cada una de las componentes
+#toma la solucion y suma 1 a cada una de las componentes
 #solo sirve para mostrarlo en notacion matricial a la hora de imprimirlo
 def trasnformar_a_notacion_matricial(Solucion:list) -> None:
     for i in range(len(Solucion)):
@@ -173,7 +173,7 @@ def imprimir_informacion(Laberinto:dict, Solucion:list, Intentos:int) -> None:
     FONDO_VERDE = '\x1b[6;30;42m'
     FONDO_NORMAL = '\x1b[0m'
     print("Intentos hasta un camino valido:", Intentos)
-    
+    print("Tablero:")
     for x in range(Laberinto["Dimensiones"]):
         for y in range(Laberinto["Dimensiones"]):
             if (x,y) in Solucion:
@@ -254,55 +254,35 @@ def test_calcular_siguientes_pos():
                 "0001",
                 "0001",
                 "0X01" ]
+    caminoActual = []
+    posInvalidas = set()
     Laberinto = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(0,0),"posInicial":(0,0),"posDestino":(3,1)}
-    assert(calcular_siguientes_pos(Laberinto,[],set()) == [(1,0)])
+    assert(calcular_siguientes_pos(Laberinto,caminoActual,posInvalidas) == [(1,0)])
 
     #laberinto donde tiene dos posiciones disponibles
-    Laberinto6 = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(3,2),"posInicial":(0,0),"posDestino":(3,1)}
-    assert(calcular_siguientes_pos(Laberinto6,[],set()) == [(2,2),(3,1)])
+    Laberinto2 = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(3,2),"posInicial":(0,0),"posDestino":(3,1)}
+    assert(calcular_siguientes_pos(Laberinto2,caminoActual,posInvalidas) == [(2,2),(3,1)])
 
     #laberinto donde tiene tres posiciones disponibles
-    Laberinto7 = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(1,2),"posInicial":(0,0),"posDestino":(3,1)}
-    assert(calcular_siguientes_pos(Laberinto7,[],set()) == [(2,2),(0,2),(1,1)])
+    Laberinto3 = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(1,2),"posInicial":(0,0),"posDestino":(3,1)}
+    assert(calcular_siguientes_pos(Laberinto3,caminoActual,posInvalidas) == [(2,2),(0,2),(1,1)])
 
     #laberinto donde tiene cuatro posiciones disponibles
-    Laberinto8 = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(2,1),"posInicial":(0,0),"posDestino":(3,1)}
-    assert(calcular_siguientes_pos(Laberinto8,[],set()) == [(3,1),(2,2),(1,1),(2,0)])
+    Laberinto4 = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(2,1),"posInicial":(0,0),"posDestino":(3,1)}
+    assert(calcular_siguientes_pos(Laberinto4,caminoActual,posInvalidas) == [(3,1),(2,2),(1,1),(2,0)])
 
-    #laberinto dimension impar donde una pared hace que no se tenga ninguna posicion disponible
-    Tablero2 = ["I1010",
-                "10010",
-                "01000",
-                "0X010",
-                "00100"]
-    Laberinto2 = {"Tablero":Tablero2,"Dimensiones":len(Tablero2),"posActual":(0,0),"posInicial":(0,0),"posDestino":(3,1)}
-    assert(calcular_siguientes_pos(Laberinto2,[],set()) == [])
-
-    #laberinto dimension par donde el camino hace que no tenga ninguna posicion disponible
-    caminoActual3 = [(1,0)]
-    Tablero3 = ["I101",
-                "0001",
-                "0101",
-                "0X01"]
-    Laberinto3 = {"Tablero":Tablero3,"Dimensiones":len(Tablero3),"posActual":(0,0),"posInicial":(0,0),"posDestino":(3,1)}
-    assert(calcular_siguientes_pos(Laberinto3,caminoActual3,set()) == [])
-
-    #laberinto de dimension impar donde tiene una unica posicion disponible
-    Tablero4 = ["I0010",
-                "10010",
-                "01000",
-                "0001X",
-                "00100"]
-    Laberinto4 = {"Tablero":Tablero4,"Dimensiones":len(Tablero4),"posActual":(2,0),"posInicial":(0,0),"posDestino":(3,4)}
-    assert(calcular_siguientes_pos(Laberinto4,[],set()) == [(3,0)])
+    #laberinto donde el camino hace que no tenga ninguna posicion disponible
+    caminoActual2 = [(1,0)]
+    Laberinto5 = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(0,0),"posInicial":(0,0),"posDestino":(3,1)}
+    assert(calcular_siguientes_pos(Laberinto5,caminoActual2,posInvalidas) == [])
 
     #laberinto de dimension impar donde tanto las paredes como el camino actual hacen que no tenga ninguna posicion disponible
-    caminoActual5 = [(0,0),(0,1),(1,1)]
-    Tablero5 = ["I0010",
+    caminoActual3 = [(0,0),(0,1),(1,1)]
+    posInvalidas2 = set([(2,0),(2,2),(3,1)])
+    Tablero2 = ["I0010",
                 "10010",
                 "00000",
                 "0001X",
                 "00100"]
-    Laberinto5 = {"Tablero":Tablero5,"Dimensiones":len(Tablero5),"posActual":(2,1),"posInicial":(0,0),"posDestino":(3,4)}
-    posInvalidas5 = set([(2,0),(2,2),(3,1)])
-    assert(calcular_siguientes_pos(Laberinto5,caminoActual5,posInvalidas5) == [])
+    Laberinto6 = {"Tablero":Tablero2,"Dimensiones":len(Tablero2),"posActual":(2,1),"posInicial":(0,0),"posDestino":(3,4)}
+    assert(calcular_siguientes_pos(Laberinto6,caminoActual3,posInvalidas2) == [])
