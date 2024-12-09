@@ -1,18 +1,20 @@
 # Lucas Lamberti - TP FINAL
 
-## Compilación archivo en C
+## Compilar y Ejecutar archivo de C
 
 gcc -Wall -g LaberintoGen.c
 
 .\a.exe <direccion de la entrada del laberinto> #Windows
 ./a.out <direccion de la entrada del laberinto> #Linux
 
-## Compilar archivo de python: 
+## Ejecutar Programa de Python: 
 
-python3 ResolvedorLaberinto.py
+python3 .\ResolverLaberinto.py #Windows
+python3 ResolverLaberinto.py #Linux
 
-## Testear valgrind:
-valgrind -s --leak-check=full ./a.out EntradaLaberinto.txt
+## Test valgrind:
+valgrind -s --leak-check=full ./a.out EntradaLaberinto.txt #Linux only
 
-## Testear pytest:
-python3 -m pytest -v .\ResolvedorLaberinto.py
+## Test pytest:
+python3 -m pytest -v .\ResolverLaberinto.py #Windows
+python3 -m pytest -v ResolverLaberinto.py #Linux
