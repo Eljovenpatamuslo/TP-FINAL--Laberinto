@@ -13,7 +13,7 @@ python3 .\ResolverLaberinto.py #Windows
 python3 ResolverLaberinto.py #Linux
 
 ## Test valgrind:
-valgrind -s --leak-check=full ./a.out EntradaLaberinto.txt #Linux only
+valgrind -s --leak-check=full ./a.out EntradaLaberinto.txt #solo Linux
 
 ## Test pytest:
 python3 -m pytest -v .\ResolverLaberinto.py #Windows
