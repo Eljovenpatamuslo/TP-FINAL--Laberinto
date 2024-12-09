@@ -37,16 +37,16 @@ void poner_paredes_aleatorias_Tablero(struct Laberinto* Laberinto,int cantCaract
 void imprimir_Tablero_en_archivo(struct Laberinto Laberinto);
 
 //pide la memoria necesaria y declara todos los elementos de Tablero como LIBRE
-char** crear_declarar_Tablero(int dimensiones);
+char** crear_y_declarar_Tablero(int dimensiones);
 
 //libera la memoria de Tablero
 void liberar_Memoria_Tablero(struct Laberinto Laberinto);
 
 //toma el archivo de entrada, el puntero estructura Laberinto y pone paredes en las distintas posiciones debajo del texto "obstaculos fijos"
-void poner_obstaculos_fijos_en_Laberinto(FILE* Archivo,struct Laberinto* Laberinto);
+void poner_obstaculos_fijos_del_archivo_en_Laberinto(FILE* Archivo,struct Laberinto* Laberinto);
 
-//toma el archivo de entrada, el puntero estructura laberinto, un caracter
-void poner_caracter_en_posicion(FILE* Archivo,struct Laberinto* Laberinto,char caracter);
+//toma el archivo de entrada, el puntero estructura laberinto, un caracter e inserta el caracter en la posicion leida debajo del texto
+void obtener_posicion_del_archivo_y_poner_caracter(FILE* Archivo,struct Laberinto* Laberinto,char caracter);
 
 //toma el archivo de entrada y devuelve el valor entero debajo del texto
 int obtener_entero_del_archivo(FILE* Archivo);

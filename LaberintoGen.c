@@ -1,6 +1,6 @@
 #include "LaberintoGen.h"
 
-char** crear_declarar_Tablero(int dimensiones){
+char** crear_y_declarar_Tablero(int dimensiones){
     char** Tablero = malloc(sizeof(char *) * dimensiones);
     assert(Tablero != NULL);
     for(int i = 0; i < dimensiones; i++){
@@ -47,14 +47,14 @@ int obtener_entero_del_archivo(FILE* Archivo){
     return entero;
 }
 
-void poner_caracter_en_posicion(FILE* Archivo,struct Laberinto* Laberinto,char caracter){
+void obtener_posicion_del_archivo_y_poner_caracter(FILE* Archivo,struct Laberinto* Laberinto,char caracter){
     int Fila,Columna;
     fscanf(Archivo,"%*[^\n]\n");
     fscanf(Archivo,"(%d,%d)\n",&Fila,&Columna);
     Laberinto->Tablero[Fila-1][Columna-1] = caracter;
 }
 
-void poner_obstaculos_fijos_en_Laberinto(FILE* Archivo,struct Laberinto* Laberinto){
+void poner_obstaculos_fijos_del_archivo_en_Laberinto(FILE* Archivo,struct Laberinto* Laberinto){
     int Fila,Columna;
     fscanf(Archivo,"%*[^\n]\n");
     while(fscanf(Archivo,"(%d,%d)\n",&Fila,&Columna) == 2){
@@ -63,20 +63,19 @@ void poner_obstaculos_fijos_en_Laberinto(FILE* Archivo,struct Laberinto* Laberin
 }
 
 void pasar_archivo_a_Laberinto(struct Laberinto* Laberinto,char* direccionEntrada){
-    int Aleatorios;
     FILE* Archivo = fopen(direccionEntrada,"r");
     assert(Archivo != NULL);
 
     Laberinto->dimensiones = obtener_entero_del_archivo(Archivo);
-    Laberinto->Tablero = crear_declarar_Tablero(Laberinto->dimensiones);
+    Laberinto->Tablero = crear_y_declarar_Tablero(Laberinto->dimensiones);
 
-    poner_obstaculos_fijos_en_Laberinto(Archivo,Laberinto);
+    poner_obstaculos_fijos_del_archivo_en_Laberinto(Archivo,Laberinto);
 
-    Aleatorios = obtener_entero_del_archivo(Archivo);
+    int Aleatorios = obtener_entero_del_archivo(Archivo);
     
-    poner_caracter_en_posicion(Archivo,Laberinto,SALIDA);//Posicion Inicial
+    obtener_posicion_del_archivo_y_poner_caracter(Archivo,Laberinto,SALIDA);//Posicion Inicial
 
-    poner_caracter_en_posicion(Archivo,Laberinto,OBJETIVO);//Objetivo
+    obtener_posicion_del_archivo_y_poner_caracter(Archivo,Laberinto,OBJETIVO);//Objetivo
 
     fclose(Archivo);
 
@@ -94,6 +93,7 @@ void liberar_Memoria_Tablero(struct Laberinto Laberinto){
 int main(int argc, char** argv){
     if(argc != 2){ //si no se pone el archivo de entrada, el programa no corre
         printf("Cantidad incorrecta de archivos\n");
+        printf("Como ejecutar el programa:\n");
         printf(".\\a.exe <Entrada> (Windows)\n");
         printf("./a.out <Entrada> (Linux)\n");
         return 1;
