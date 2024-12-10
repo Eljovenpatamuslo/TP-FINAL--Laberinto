@@ -14,50 +14,13 @@
 **El camino desde el inicio hasta el destino se representa como una lista de de posiciones ordenadas empezando desde la posicion inicial hasta la posicion del destino
 
 '''
-
-#Funcionamiento del algoritmo
-'''
-El algoritmo hace siguiente:
-    -cargar los datos del laberinto del archivo generado por el programa en c en el diccionario Laberinto
-    -se toma la posicion actual como la posicion inicial
-    -se busca en cual de las 4 direcciones de la posicion actual esta libre, las posibles posiciones se agregan a una lista
-
-para que una posicion este libre debe: 
-    -estar en las dimensiones del tablero
-    -el caracter con las coordenadas asociadas debe ser "0"
-    -no debe estar ni en la lista Solucion ni en el conjunto de soluciones invalidas
-
-Apartir de esto pueden haber dos posibilidades:
-    *hay posibles posiciones para elegir:
-        -se intenta ver cual de todas las posiciones esta mas cerca del objetivo (si todas estan a igual distancia se elije la primera que tomo el valor mas chico)
-        -la posicion elegida se toma como la posicion actual y ademas se agrega como ultimo elemento en la lista Solucion
-    *no hay ninguna posicion para elegir:
-        -si no hay ninguna posicion disponible entonces se agrega la posicion a el conjunto de posiciones invalidas, la lista solucion vuelve a ser vacia y
-        se toma la posicion actual como la inicial
-
-Este proceso se va repitiendo hasta que:
-    *la posicion actual sea la posicion del destino
-    *no hay posiciones para elegir y la posicion actual es la inicial
-
-En cualquiera de los dos casos se retorna la solucion que puede tener el camino o ser una lista vacia:
-    *la lista es vacia:
-        -vuelve a generar otro laberinto y empezar el proceso devuelta
-    *la lista no es vacia: 
-        -sabemos que es el camino correcto por lo que lo imprime en pantalla
-
-        
-El algoritmo NO siempre generara el camino optimo, esto se debe a que si dos posiciones estan a misma distancia del destino, el algoritmo elegira el primer valor mas bajo
-
-Las prioridades del algoritmo son 1.ir abajo,2.ir derecha,3.ir arriba,4.ir izquierda ya que asi decidí asignar la lista de direcciones
-'''
-
 import subprocess
 import platform
 
 #recibe el Laberinto y:
 #en la clave "Tablero" se agregan strings siendo cada string una fila del tablero
 #en la clave "Dimensiones" se le asigma el largo del tablero 
-def pasar_archivo_a_Tablero(Laberinto:dict) -> None:
+def obtener_dimensiones_y_tablero_de_archivo(Laberinto:dict) -> None:
     archivoParaLeer = "SalidaLaberinto.txt"
     archivoParaC = "EntradaLaberinto.txt"
     tipoDeEjecutable = ""
@@ -117,6 +80,7 @@ def buscar_solucion(Laberinto:dict) -> list:
     Laberinto["posActual"] = Laberinto["posInicial"]
     posInvalidas = set()
     caminoActual = []
+    posValidas = []
     terminar = False
     Destino = "X"
 
@@ -194,7 +158,7 @@ def main() -> None:
     Laberinto = {"Tablero":[],"Dimensiones":-1,"posActual":(-1,-1),"posInicial":(-1,-1),"posDestino":(-1,-1)}
     while Solucion == []:
         Laberinto["Tablero"] = []
-        pasar_archivo_a_Tablero(Laberinto)
+        obtener_dimensiones_y_tablero_de_archivo(Laberinto)
 
         #este if se hace para no llamar a la funcion buscar_principio_y_final cada vez que se hace un nuevo intento
         #ya que tiene que pasar por todos los elementos de tablero por una informacion que ya se conoce
@@ -229,7 +193,7 @@ def test_buscar_solucion():
     Laberinto = {"Tablero":Tablero,"Dimensiones":len(Tablero),"posActual":(-1,-1),"posInicial":(0,0),"posDestino":(3,1)}
     assert(buscar_solucion(Laberinto) == [(0,0),(1,0),(2,0),(3,0),(3,1)])
 
-    #probar laberintos de dimension par imposibles
+    #laberinto de dimension par imposible
     Tablero2 = ["I101",
                 "1001",
                 "0101",
@@ -255,6 +219,14 @@ def test_buscar_solucion():
                 "0001X"]
     Laberinto4 = {"Tablero":Tablero4,"Dimensiones":len(Tablero4),"posActual":(-1,-1),"posInicial":(1,2),"posDestino":(4,4)}
     assert(buscar_solucion(Laberinto4) == [])
+
+    #laberinto de dimension par donde hay dos posibles caminos de igual longitud
+    Tablero5 = ["1111",
+                "0I01",
+                "0101",
+                "0X01"]
+    Laberinto5 = {"Tablero":Tablero5,"Dimensiones":len(Tablero5),"posActual":(-1,-1),"posInicial":(1,1),"posDestino":(3,2)}
+    assert(buscar_solucion(Laberinto5) == [(1,1),(1,2),(2,2),(3,2),(3,1)])
 
 def test_calcular_siguientes_pos():
     #laberinto donde tiene una unica posicion disponible
