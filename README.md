@@ -1,4 +1,4 @@
-# Lucas Lamberti - TP FINAL
+# Lamberti Lucas - TP FINAL
 
 ## Compilar y Ejecutar archivo de C
 gcc -Wall -g LaberintoGen.c
