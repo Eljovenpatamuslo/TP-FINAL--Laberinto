@@ -29,7 +29,7 @@ def obtener_dimensiones_y_tablero_de_archivo(Laberinto:dict) -> None:
     else:
         tipoDeEjecutable = "./a.out"
         
-    response = subprocess.run([tipoDeEjecutable, archivoParaC])
+    response = subprocess.run([tipoDeEjecutable, archivoParaC, archivoParaLeer])
     if response.returncode != 0:
         print("error en la ejecucion")
         exit()
@@ -84,22 +84,22 @@ def buscar_solucion(Laberinto:dict) -> list:
     terminar = False
     Destino = "X"
 
+    caminoActual.append(Laberinto["posActual"])
     while not terminar:
-        caminoActual.append(Laberinto["posActual"])
         posValidas = calcular_siguientes_pos(Laberinto,caminoActual,posInvalidas)
-
         if posValidas != []:
             Laberinto["posActual"] = posicion_mas_cercana_a_destino(posValidas,Laberinto["posDestino"])
-        else:
-            if Laberinto["posActual"] == Laberinto["posInicial"]:
-                terminar = True
+            caminoActual.append(Laberinto["posActual"])
+        elif Laberinto["posActual"] != Laberinto["posInicial"]:
             posInvalidas.add(Laberinto["posActual"])
-            Laberinto["posActual"] = Laberinto["posInicial"]
+            caminoActual.remove(Laberinto["posActual"])
+            Laberinto["posActual"] = caminoActual[-1]
+        else:
+            terminar = 1
             caminoActual = []
 
         (filaActual,columnaActual) = Laberinto["posActual"]
         if Laberinto["Tablero"][filaActual][columnaActual] == Destino:
-            caminoActual.append(Laberinto["posActual"])
             terminar = True
 
     return caminoActual
